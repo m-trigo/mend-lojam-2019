@@ -7,12 +7,39 @@ public class GridScript : MonoBehaviour
 {
     /* Inspector */
 
+    #region INSPECTOR
+
     [SerializeField]
     private GameObject edgePrefab = null;
 
     [SerializeField]
+    private GameObject topLeftEdgePrefab = null;
+
+    [SerializeField]
+    private GameObject topMiddleEdgePrefab = null;
+
+    [SerializeField]
+    private GameObject topRightEdgePrefab = null;
+
+    [SerializeField]
+    private GameObject bottomLeftEdgePrefab = null;
+
+    [SerializeField]
+    private GameObject bottomMiddleEdgePrefab = null;
+
+    [SerializeField]
+    private GameObject bottomRightEdgePrefab = null;
+
+    [SerializeField]
+    private GameObject middleRightEdgePrefab = null;
+
+    [SerializeField]
+    private GameObject middleLeftEdgePrefab = null;
+
+    [SerializeField]
     private GameObject[] tilePrefabs = null;
 
+    [Space]
     [Space]
 
     [SerializeField]
@@ -21,6 +48,8 @@ public class GridScript : MonoBehaviour
     [SerializeField]
     [Range( 4f, 10f )]
     private float speed = 10f;
+
+    #endregion
 
     /* Life Cycle */
 
@@ -35,16 +64,21 @@ public class GridScript : MonoBehaviour
 
         grid_ = new GameObject[ SIZE, SIZE ];
 
-        for ( int x = 0; x < SIZE; x++ )
+        CreateAt( topLeftEdgePrefab, 0, SIZE - 1 );
+        CreateAt( topRightEdgePrefab, SIZE - 1, SIZE - 1 );
+        CreateAt( bottomLeftEdgePrefab, 0, 0 );
+        CreateAt( bottomRightEdgePrefab, SIZE - 1, 0 );
+
+        for ( int x = 1; x < SIZE - 1; x++ )
         {
-            CreateAt( edgePrefab, x, 0 );
-            CreateAt( edgePrefab, x, SIZE - 1 );
+            CreateAt( bottomMiddleEdgePrefab, x, 0 );
+            CreateAt( topMiddleEdgePrefab, x, SIZE - 1 );
         }
 
         for ( int y = 1; y < SIZE - 1; y++ )
         {
-            CreateAt( edgePrefab, 0, y );
-            CreateAt( edgePrefab, SIZE - 1, y );
+            CreateAt( middleLeftEdgePrefab, 0, y );
+            CreateAt( middleRightEdgePrefab, SIZE - 1, y );
         }
 
         CreateAt( tilePrefabs[ 0 ], SIZE / 2 - 2, SIZE / 2 );

@@ -45,6 +45,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   edgePrefab: {fileID: 8369217161335825893, guid: 7e8b40d8366829a47a8baa398bd9f9da,
     type: 3}
+  topLeftEdgePrefab: {fileID: 2949989676265316303, guid: f10bf6191e23da64f907a1b4533a636b,
+    type: 3}
+  topMiddleEdgePrefab: {fileID: 3202644143461588357, guid: 237a210245e7d7240873fcd87126bd94,
+    type: 3}
+  topRightEdgePrefab: {fileID: 1897572710052687874, guid: e5a63cf4eb99168448e1701ed836bd67,
+    type: 3}
+  bottomLeftEdgePrefab: {fileID: 1797065541692010002, guid: a58f4a7ef0fdf564fb57180b49b1100a,
+    type: 3}
+  bottomMiddleEdgePrefab: {fileID: 4506095912437388907, guid: 970adfd474fd7c94cbad7ee9bb61361b,
+    type: 3}
+  bottomRightEdgePrefab: {fileID: 2267131228871028951, guid: ab62856b5319e8d40b572a5776df11b7,
+    type: 3}
+  middleRightEdgePrefab: {fileID: 2957757355897082800, guid: 87edd9d96c71e304283685a877c9ebac,
+    type: 3}
+  middleLeftEdgePrefab: {fileID: 6124066516145049607, guid: 249e4e43bc6de1a42b6199b9b8ce754f,
+    type: 3}
   tilePrefabs:
   - {fileID: 3549038781219326279, guid: 537486b02689be04fa05cb0fe2cf7d16, type: 3}
   - {fileID: 3241809259156618884, guid: bb7a2adc7d65473458980f1e6bb07e5c, type: 3}
