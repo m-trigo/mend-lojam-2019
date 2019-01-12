@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +11,13 @@ public class GridScript : MonoBehaviour
 
     [SerializeField]
     private GameObject[] tiles = null;
+
+    [SerializeField]
+    private Ease Ease = Ease.Unset;
+
+    [SerializeField]
+    [Range(4f, 10f)]
+    private float speed = 10f;
 
     /* Life Cycle */
 
@@ -37,10 +44,10 @@ public class GridScript : MonoBehaviour
             CreateAt( edgePrefab, SIZE - 1, y );
         }
 
-        CreateAt( tiles[0], SIZE / 2, SIZE / 2 );
-        CreateAt( tiles[1], SIZE / 2 - 1, SIZE / 2 );
-        CreateAt( tiles[2], SIZE / 2 - 2, SIZE / 2 );
-        CreateAt( tiles[3], SIZE / 2 + 1, SIZE / 2 );
+        CreateAt( tiles[ 0 ], SIZE / 2, SIZE / 2 );
+        CreateAt( tiles[ 1 ], SIZE / 2 - 1, SIZE / 2 );
+        CreateAt( tiles[ 2 ], SIZE / 2 - 2, SIZE / 2 );
+        CreateAt( tiles[ 3 ], SIZE / 2 + 1, SIZE / 2 );
 
         activeTile_ = grid_[ SIZE / 2, SIZE / 2 ];
     }
@@ -64,7 +71,7 @@ public class GridScript : MonoBehaviour
             move( Direction.RIGHT );
         }
 
-        if (IsMended())
+        if ( IsMended() )
         {
             Debug.Log( "Mended" );
         }
@@ -189,7 +196,13 @@ public class GridScript : MonoBehaviour
         Coordinate newCoordinate = destination( direction );
         if ( !oldCoordinate.Equals( newCoordinate ) )
         {
-            PlaceAt( activeTile_, newCoordinate );
+            Vector3 dest = bottomLeftCorner + Vector3.one / 2 + new Vector3( newCoordinate.x, newCoordinate.y, 0 );
+
+            float distanceToMove = Vector2.Distance(dest, activeTile_.transform.position);
+            float time = distanceToMove / speed;
+
+            activeTile_.transform.DOMove( dest, time ).SetEase( Ease );
+            grid_[ newCoordinate.x, newCoordinate.y ] = activeTile_;
             grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
         }
     }
@@ -206,14 +219,14 @@ public class GridScript : MonoBehaviour
                 {
                     for ( int y = bottomLeftY; y < SIZE && y < bottomLeftY + VICTORY_SIZE; y++ )
                     {
-                        if (grid_[x, y] != null && !grid_[x, y].CompareTag(edgeTag_))
+                        if ( grid_[ x, y ] != null && !grid_[ x, y ].CompareTag( edgeTag_ ) )
                         {
                             count++;
                         }
                     }
                 }
 
-                if (count == VICTORY_SIZE * VICTORY_SIZE)
+                if ( count == VICTORY_SIZE * VICTORY_SIZE )
                 {
                     return true;
                 }
