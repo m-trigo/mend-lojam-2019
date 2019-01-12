@@ -121,7 +121,7 @@ public class GridScript : MonoBehaviour
     public void SetActiveTile( GameObject gameObject )
     {
         activeTileIndex_ = tiles_.IndexOf( gameObject );
-        gameObject.transform.DOShakeScale( 0.2f, 0.2f );
+        Shake( gameObject );
     }
 
     /* Private */
@@ -155,6 +155,14 @@ public class GridScript : MonoBehaviour
     private GameObject[,] grid_ = null;
 
     private Vector3 bottomLeftCorner => transform.localPosition - SIZE / 2 * Vector3.one;
+
+    private bool isMoving = false;
+
+    private void Shake( GameObject gameObject )
+    {
+        gameObject.transform.localScale = Vector3.one;
+        gameObject.transform.DOShakeScale( 0.2f, 0.2f ).OnComplete( () => gameObject.transform.localScale = Vector3.one );
+    }
 
     private void CycleActiveTile()
     {
@@ -237,6 +245,12 @@ public class GridScript : MonoBehaviour
 
     private void move( Direction direction )
     {
+        if ( isMoving )
+        {
+            return;
+        }
+
+        isMoving = true;
         Coordinate oldCoordinate = ActiveTileCoordinate;
         Coordinate newCoordinate = destination( direction );
         if ( !oldCoordinate.Equals( newCoordinate ) )
@@ -246,9 +260,16 @@ public class GridScript : MonoBehaviour
             float distanceToMove = Vector2.Distance( dest, activeTile_.transform.position );
             float time = distanceToMove / speed;
 
-            activeTile_.transform.DOMove( dest, time ).SetEase( Ease );
+            activeTile_.transform.DOMove( dest, time ).SetEase( Ease ).OnComplete( () => {
+                isMoving = false;
+                Shake( activeTile_ );
+            } );
             grid_[ newCoordinate.x, newCoordinate.y ] = activeTile_;
             grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
+        }
+        else
+        {
+            isMoving = false;
         }
     }
 
