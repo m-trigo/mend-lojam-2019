@@ -10,13 +10,15 @@ public class GridScript : MonoBehaviour
     private GameObject edgePrefab = null;
 
     [SerializeField]
-    private GameObject[] tiles = null;
+    private GameObject[] tilePrefabs = null;
+
+    [Space]
 
     [SerializeField]
     private Ease Ease = Ease.Unset;
 
     [SerializeField]
-    [Range(4f, 10f)]
+    [Range( 4f, 10f )]
     private float speed = 10f;
 
     /* Life Cycle */
@@ -25,7 +27,7 @@ public class GridScript : MonoBehaviour
     {
         edgeTag_ = edgePrefab.tag;
         tileTags_ = new List<string>();
-        foreach ( GameObject gameObject in tiles )
+        foreach ( GameObject gameObject in tilePrefabs )
         {
             tileTags_.Add( gameObject.tag );
         }
@@ -44,12 +46,18 @@ public class GridScript : MonoBehaviour
             CreateAt( edgePrefab, SIZE - 1, y );
         }
 
-        CreateAt( tiles[ 0 ], SIZE / 2, SIZE / 2 );
-        CreateAt( tiles[ 1 ], SIZE / 2 - 1, SIZE / 2 );
-        CreateAt( tiles[ 2 ], SIZE / 2 - 2, SIZE / 2 );
-        CreateAt( tiles[ 3 ], SIZE / 2 + 1, SIZE / 2 );
+        CreateAt( tilePrefabs[ 0 ], SIZE / 2, SIZE / 2 );
+        CreateAt( tilePrefabs[ 1 ], SIZE / 2 - 1, SIZE / 2 );
+        CreateAt( tilePrefabs[ 2 ], SIZE / 2 - 2, SIZE / 2 );
+        CreateAt( tilePrefabs[ 3 ], SIZE / 2 + 1, SIZE / 2 );
 
-        activeTile_ = grid_[ SIZE / 2, SIZE / 2 ];
+        tiles_ = new List<GameObject>()
+        {
+            grid_[SIZE / 2, SIZE / 2],
+            grid_[SIZE / 2 - 1, SIZE / 2],
+            grid_[SIZE / 2 - 2, SIZE / 2],
+            grid_[SIZE / 2 + 1, SIZE / 2],
+        };
     }
 
     private void Update()
@@ -58,7 +66,15 @@ public class GridScript : MonoBehaviour
         {
             move( Direction.UP );
         }
+        else if ( Input.GetKeyDown( KeyCode.UpArrow ) )
+        {
+            move( Direction.UP );
+        }
         else if ( Input.GetKeyDown( KeyCode.A ) )
+        {
+            move( Direction.LEFT );
+        }
+        else if ( Input.GetKeyDown( KeyCode.LeftArrow ) )
         {
             move( Direction.LEFT );
         }
@@ -66,9 +82,29 @@ public class GridScript : MonoBehaviour
         {
             move( Direction.DOWN );
         }
+        else if ( Input.GetKeyDown( KeyCode.DownArrow ) )
+        {
+            move( Direction.DOWN );
+        }
         else if ( Input.GetKeyDown( KeyCode.D ) )
         {
             move( Direction.RIGHT );
+        }
+        else if ( Input.GetKeyDown( KeyCode.RightArrow ) )
+        {
+            move( Direction.RIGHT );
+        }
+        else if ( Input.GetKeyDown( KeyCode.Space ) )
+        {
+            CycleActiveTile();
+        }
+        else if ( Input.GetKeyDown( KeyCode.Return ) )
+        {
+            CycleActiveTile();
+        }
+        else if ( Input.GetKeyDown( KeyCode.Tab ) )
+        {
+            CycleActiveTile();
         }
 
         if ( IsMended() )
@@ -84,7 +120,8 @@ public class GridScript : MonoBehaviour
 
     public void SetActiveTile( GameObject gameObject )
     {
-        activeTile_ = gameObject;
+        activeTileIndex_ = tiles_.IndexOf( gameObject );
+        gameObject.transform.DOShakeScale( 0.2f, 0.2f );
     }
 
     /* Private */
@@ -92,7 +129,10 @@ public class GridScript : MonoBehaviour
     private string edgeTag_ = null;
     private List<string> tileTags_ = null;
 
-    private GameObject activeTile_ = null;
+    private List<GameObject> tiles_ = null;
+    private int activeTileIndex_ = 0;
+
+    private GameObject activeTile_ => tiles_[ activeTileIndex_ ];
     private Coordinate ActiveTileCoordinate
     {
         get
@@ -115,6 +155,11 @@ public class GridScript : MonoBehaviour
     private GameObject[,] grid_ = null;
 
     private Vector3 bottomLeftCorner => transform.localPosition - SIZE / 2 * Vector3.one;
+
+    private void CycleActiveTile()
+    {
+        SetActiveTile( tiles_[ ( activeTileIndex_ + 1 ) % tiles_.Count ] );
+    }
 
     private void PlaceAt( GameObject gameObject, Coordinate coordinate )
     {
@@ -198,7 +243,7 @@ public class GridScript : MonoBehaviour
         {
             Vector3 dest = bottomLeftCorner + Vector3.one / 2 + new Vector3( newCoordinate.x, newCoordinate.y, 0 );
 
-            float distanceToMove = Vector2.Distance(dest, activeTile_.transform.position);
+            float distanceToMove = Vector2.Distance( dest, activeTile_.transform.position );
             float time = distanceToMove / speed;
 
             activeTile_.transform.DOMove( dest, time ).SetEase( Ease );
