@@ -8,7 +8,16 @@ public class GridScript : MonoBehaviour
     private GameObject edgePrefab = null;
 
     [SerializeField]
-    private GameObject testTilePrefab = null;
+    private GameObject tileAPrefab = null;
+
+    [SerializeField]
+    private GameObject tileBPrefab = null;
+
+    [SerializeField]
+    private GameObject tileCPrefab = null;
+
+    [SerializeField]
+    private GameObject tileDPrefab = null;
 
     /* Life Cycle */
 
@@ -28,12 +37,12 @@ public class GridScript : MonoBehaviour
             CreateAt( edgePrefab, SIZE - 1, y );
         }
 
-        CreateAt( testTilePrefab, SIZE / 2, SIZE / 2 );
-        testTileCoordinate = new Coordinate()
-        {
-            x = SIZE / 2,
-            y = SIZE / 2
-        };
+        CreateAt( tileAPrefab, SIZE / 2, SIZE / 2 );
+        CreateAt( tileBPrefab, SIZE / 2 - 1, SIZE / 2 );
+        CreateAt( tileCPrefab, SIZE / 2 - 2, SIZE / 2 );
+        CreateAt( tileDPrefab, SIZE / 2 + 1, SIZE / 2 );
+
+        selectedTile_ = grid_[ SIZE / 2, SIZE / 2 ];
     }
 
     private void Update()
@@ -60,6 +69,11 @@ public class GridScript : MonoBehaviour
 
     public const int SIZE = 10;
 
+    public void SetSelectedTile( GameObject gameObject )
+    {
+        selectedTile_ = gameObject;
+    }
+
     /* Private */
 
     private enum Direction { UP, DOWN, LEFT, RIGHT };
@@ -80,10 +94,27 @@ public class GridScript : MonoBehaviour
         }
     }
 
-    private Coordinate testTileCoordinate;
+    private GameObject selectedTile_ = null;
+    private Coordinate SelectedTileCoordinate
+    {
+        get
+        {
+            for ( int x = 0; x < SIZE; x++ )
+            {
+                for ( int y = 0; y < SIZE; y++ )
+                {
+                    if ( selectedTile_.Equals( grid_[ x, y ] ) )
+                    {
+                        return new Coordinate() { x = x, y = y };
+                    }
+                }
+            }
+
+            return new Coordinate();
+        }
+    }
 
     private GameObject[,] grid_;
-    private GameObject testTile => grid_[ testTileCoordinate.x, testTileCoordinate.y ];
 
     private Vector3 bottomLeftCorner => transform.localPosition - SIZE / 2 * Vector3.one;
 
@@ -107,46 +138,53 @@ public class GridScript : MonoBehaviour
 
     private Coordinate destination( Direction direction )
     {
-        Coordinate d = testTileCoordinate;
+        Coordinate d = SelectedTileCoordinate;
         switch ( direction )
         {
             case Direction.UP:
-                for ( int y = d.y; y < SIZE; y++ )
+                for ( int y = d.y + 1; y < SIZE; y++ )
                 {
-                    if ( grid_[ d.x, y ] == null )
+                    if ( grid_[ d.x, y ] != null )
                     {
-                        d.y = y;
+                        break;
                     }
+
+                    d.y = y;
                 }
+
                 break;
 
             case Direction.DOWN:
-                for ( int y = d.y; y > 0; y-- )
+                for ( int y = d.y - 1; y > 0; y-- )
                 {
-                    if ( grid_[ d.x, y ] == null )
+                    if ( grid_[ d.x, y ] != null )
                     {
-                        d.y = y;
+                        break;
                     }
+                    d.y = y;
                 }
                 break;
 
             case Direction.RIGHT:
-                for ( int x = d.x; x < SIZE; x++ )
+                for ( int x = d.x + 1; x < SIZE; x++ )
                 {
-                    if ( grid_[ x, d.y ] == null )
+                    if ( grid_[ x, d.y ] != null )
                     {
-                        d.x = x;
+                        break;
                     }
+
+                    d.x = x;
                 }
                 break;
 
             case Direction.LEFT:
-                for ( int x = d.x; x > 0; x-- )
+                for ( int x = d.x - 1; x > 0; x-- )
                 {
-                    if ( grid_[ x, d.y ] == null )
+                    if ( grid_[ x, d.y ] != null )
                     {
-                        d.x = x;
+                        break;
                     }
+                    d.x = x;
                 }
                 break;
         }
@@ -154,15 +192,14 @@ public class GridScript : MonoBehaviour
         return d;
     }
 
-    private void move(Direction direction)
+    private void move( Direction direction )
     {
-        Coordinate d = destination( direction );
-        PlaceAt( testTile, d );
-
-        if ( !testTileCoordinate.Equals(d) )
+        Coordinate oldCoordinate = SelectedTileCoordinate;
+        Coordinate newCoordinate = destination( direction );
+        if ( !oldCoordinate.Equals( newCoordinate ) )
         {
-            grid_[ testTileCoordinate.x, testTileCoordinate.y ] = null;
-            testTileCoordinate = d;
+            PlaceAt( selectedTile_, newCoordinate );
+            grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
         }
     }
 }
