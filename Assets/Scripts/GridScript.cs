@@ -39,11 +39,14 @@ public class GridScript : MonoBehaviour
     [SerializeField]
     private GameObject[] tilePrefabs = null;
 
-    [Space]
-    [Space]
+    [SerializeField]
+    private Ease MovementEase = Ease.Unset;
 
     [SerializeField]
-    private Ease Ease = Ease.Unset;
+    private Ease MoveToMiddleEase = Ease.Unset;
+
+    [SerializeField]
+    private Ease GrowToFitEase = Ease.Unset;
 
     [SerializeField]
     [Range( 4f, 10f )]
@@ -145,11 +148,6 @@ public class GridScript : MonoBehaviour
         {
             Restart();
         }
-
-        if ( IsMended() )
-        {
-            Debug.Log( "Mended" );
-        }
     }
 
     /* Public */
@@ -193,7 +191,7 @@ public class GridScript : MonoBehaviour
 
     private GameObject[,] grid_ = null;
 
-    private Vector3 bottomLeftCorner => transform.localPosition - SIZE / 2 * Vector3.one;
+    private Vector3 BottomLeftCorner => transform.localPosition - SIZE / 2 * Vector3.one;
 
     private bool isMoving = false;
 
@@ -205,7 +203,38 @@ public class GridScript : MonoBehaviour
     private void Shake( GameObject gameObject )
     {
         gameObject.transform.localScale = Vector3.one;
-        gameObject.transform.DOShakeScale( 0.2f, 0.2f ).OnComplete( () => gameObject.transform.localScale = Vector3.one );
+        gameObject.transform.DOShakeScale( 0.25f, 0.25f ).OnComplete( () => {
+            gameObject.transform.localScale = Vector3.one;
+        } );
+    }
+
+    private void CheckVictory()
+    {
+        if ( IsMended() )
+        {
+            GameObject container = new GameObject( "container" );
+
+            Vector3 p = Vector3.zero;
+            foreach ( GameObject tile in tiles_ )
+            {
+                p += tile.transform.localPosition;
+            }
+            p = p / tiles_.Count;
+            container.transform.position = p;
+
+            foreach ( GameObject tile in tiles_ )
+            {
+                tile.transform.SetParent( container.transform );
+            }
+
+            float distanceToMove = Vector2.Distance( Vector3.zero, container.transform.position );
+            float time = distanceToMove / speed / 2;
+
+            container.transform.DOScale( 0, 1 ).SetEase( GrowToFitEase ).OnComplete( () => {
+                container.transform.position = Vector3.zero;
+                container.transform.DOScale( 4, 2 ).SetEase( GrowToFitEase );
+            } );
+        }
     }
 
     private void CycleActiveTile()
@@ -220,7 +249,7 @@ public class GridScript : MonoBehaviour
 
     private void PlaceAt( GameObject gameObject, Coordinate coordinate )
     {
-        gameObject.transform.localPosition = bottomLeftCorner + Vector3.one / 2 + new Vector3( coordinate.x, coordinate.y, 0 );
+        gameObject.transform.localPosition = BottomLeftCorner + Vector3.one / 2 + new Vector3( coordinate.x, coordinate.y, 0 );
         grid_[ coordinate.x, coordinate.y ] = gameObject;
     }
 
@@ -294,7 +323,7 @@ public class GridScript : MonoBehaviour
 
     private void move( Direction direction )
     {
-        if ( isMoving )
+        if ( isMoving || IsMended() )
         {
             return;
         }
@@ -304,21 +333,27 @@ public class GridScript : MonoBehaviour
         Coordinate newCoordinate = destination( direction );
         if ( !oldCoordinate.Equals( newCoordinate ) )
         {
-            Vector3 dest = bottomLeftCorner + Vector3.one / 2 + new Vector3( newCoordinate.x, newCoordinate.y, 0 );
+            Vector3 dest = BottomLeftCorner + Vector3.one / 2 + new Vector3( newCoordinate.x, newCoordinate.y, 0 );
 
             float distanceToMove = Vector2.Distance( dest, activeTile_.transform.position );
             float time = distanceToMove / speed;
 
-            activeTile_.transform.DOMove( dest, time ).SetEase( Ease ).OnComplete( () => {
+            activeTile_.transform.DOMove( dest, time ).SetEase( MovementEase ).OnComplete( () => {
                 isMoving = false;
                 foreach ( GameObject tile in tiles_ )
                 {
                     float distance = Vector2.Distance( tile.transform.localPosition, activeTile_.transform.localPosition );
-                    if ( distance < 1.8f )
+                    if ( distance < 1.8f && distance > 0.2f )
                     {
                         Shake( tile );
                     }
                 }
+
+                activeTile_.transform.localScale = Vector3.one;
+                activeTile_.transform.DOShakeScale( 0.2f, 0.2f ).OnComplete( () => {
+                    activeTile_.transform.localScale = Vector3.one;
+                    CheckVictory(); // race condition
+                } );
             } );
 
             grid_[ newCoordinate.x, newCoordinate.y ] = activeTile_;
