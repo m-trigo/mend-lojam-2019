@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GridScript : MonoBehaviour
 {
@@ -106,6 +107,10 @@ public class GridScript : MonoBehaviour
         {
             CycleActiveTile();
         }
+        else if ( Input.GetKeyDown( KeyCode.R ) )
+        {
+            Restart();
+        }
 
         if ( IsMended() )
         {
@@ -158,6 +163,11 @@ public class GridScript : MonoBehaviour
 
     private bool isMoving = false;
 
+    private void Restart()
+    {
+        SceneManager.LoadScene( SceneManager.GetActiveScene().name );
+    }
+
     private void Shake( GameObject gameObject )
     {
         gameObject.transform.localScale = Vector3.one;
@@ -167,6 +177,11 @@ public class GridScript : MonoBehaviour
     private void CycleActiveTile()
     {
         SetActiveTile( tiles_[ ( activeTileIndex_ + 1 ) % tiles_.Count ] );
+    }
+
+    private void PlaceAt( GameObject gameObject, int x, int y )
+    {
+        PlaceAt( gameObject, new Coordinate() { x = x, y = y } );
     }
 
     private void PlaceAt( GameObject gameObject, Coordinate coordinate )
