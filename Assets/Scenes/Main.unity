@@ -261,35 +261,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: testTilePrefab
-      value: 
-      objectReference: {fileID: 6776608664148143800, guid: d40e523494601bb48b218cfd637c4ed2,
-        type: 3}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tileAPrefab
-      value: 
-      objectReference: {fileID: 6440311860242118189, guid: 9c2d2b18736d706478dd9f2a5b7c2aa5,
-        type: 3}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tileBPrefab
-      value: 
-      objectReference: {fileID: 2550866581923976602, guid: 527ed4bd783fb004ab29d589c521017e,
-        type: 3}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tileCPrefab
-      value: 
-      objectReference: {fileID: 9076792848927047999, guid: df26abae4c615aa44b998e0ad5f99ade,
-        type: 3}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tileDPrefab
-      value: 
-      objectReference: {fileID: 8196246378052315267, guid: e709dc5988ccae44895ddaacdbc3a320,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cac6659083bd0344ca4565d05fd0dfdd, type: 3}

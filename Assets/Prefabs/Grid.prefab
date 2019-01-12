@@ -45,3 +45,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   edgePrefab: {fileID: 8369217161335825893, guid: 7e8b40d8366829a47a8baa398bd9f9da,
     type: 3}
+  tileAPrefab: {fileID: 3549038781219326279, guid: 537486b02689be04fa05cb0fe2cf7d16,
+    type: 3}
+  tileBPrefab: {fileID: 3241809259156618884, guid: bb7a2adc7d65473458980f1e6bb07e5c,
+    type: 3}
+  tileCPrefab: {fileID: 431671553534521181, guid: 7838aaadbc984c54b95667781f74c102,
+    type: 3}
+  tileDPrefab: {fileID: 2415914987917489986, guid: 6902e77122a510740a6735a4eead1bf9,
+    type: 3}

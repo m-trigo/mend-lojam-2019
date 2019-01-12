@@ -76,24 +76,6 @@ public class GridScript : MonoBehaviour
 
     /* Private */
 
-    private enum Direction { UP, DOWN, LEFT, RIGHT };
-
-    private struct Coordinate
-    {
-        public int x;
-        public int y;
-
-        public override string ToString()
-        {
-            return "[" + x + "," + y + "]";
-        }
-
-        public bool Equals( Coordinate coordinate )
-        {
-            return coordinate.x == x && coordinate.y == y;
-        }
-    }
-
     private GameObject selectedTile_ = null;
     private Coordinate SelectedTileCoordinate
     {
