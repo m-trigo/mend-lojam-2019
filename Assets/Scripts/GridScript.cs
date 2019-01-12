@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class GridScript : MonoBehaviour
 {
@@ -14,6 +16,13 @@ public class GridScript : MonoBehaviour
 
     private void Awake()
     {
+        edgeTag_ = edgePrefab.tag;
+        tileTags_ = new List<string>();
+        foreach ( GameObject gameObject in tiles )
+        {
+            tileTags_.Add( gameObject.tag );
+        }
+
         grid_ = new GameObject[ SIZE, SIZE ];
 
         for ( int x = 0; x < SIZE; x++ )
@@ -54,11 +63,17 @@ public class GridScript : MonoBehaviour
         {
             move( Direction.RIGHT );
         }
+
+        if (IsMended())
+        {
+            Debug.Log( "Mended" );
+        }
     }
 
     /* Public */
 
     public const int SIZE = 10;
+    public const int VICTORY_SIZE = 2;
 
     public void SetActiveTile( GameObject gameObject )
     {
@@ -66,6 +81,9 @@ public class GridScript : MonoBehaviour
     }
 
     /* Private */
+
+    private string edgeTag_ = null;
+    private List<string> tileTags_ = null;
 
     private GameObject activeTile_ = null;
     private Coordinate ActiveTileCoordinate
@@ -174,5 +192,34 @@ public class GridScript : MonoBehaviour
             PlaceAt( activeTile_, newCoordinate );
             grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
         }
+    }
+
+    private bool IsMended()
+    {
+        for ( int bottomLeftX = 0; bottomLeftX < SIZE - VICTORY_SIZE; bottomLeftX++ )
+        {
+            for ( int bottomLeftY = 0; bottomLeftY < SIZE - VICTORY_SIZE; bottomLeftY++ )
+            {
+                int count = 0;
+
+                for ( int x = bottomLeftX; x < SIZE && x < bottomLeftX + VICTORY_SIZE; x++ )
+                {
+                    for ( int y = bottomLeftY; y < SIZE && y < bottomLeftY + VICTORY_SIZE; y++ )
+                    {
+                        if (grid_[x, y] != null && !grid_[x, y].CompareTag(edgeTag_))
+                        {
+                            count++;
+                        }
+                    }
+                }
+
+                if (count == VICTORY_SIZE * VICTORY_SIZE)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

@@ -148,7 +148,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BackGroundColor: {r: 0.9607844, g: 0.92549026, b: 0.8352942, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -261,34 +261,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tiles.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tiles.Array.data[0]
-      value: 
-      objectReference: {fileID: 3549038781219326279, guid: 537486b02689be04fa05cb0fe2cf7d16,
-        type: 3}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tiles.Array.data[1]
-      value: 
-      objectReference: {fileID: 3241809259156618884, guid: bb7a2adc7d65473458980f1e6bb07e5c,
-        type: 3}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tiles.Array.data[2]
-      value: 
-      objectReference: {fileID: 431671553534521181, guid: 7838aaadbc984c54b95667781f74c102,
-        type: 3}
-    - target: {fileID: 7565705670665411223, guid: cac6659083bd0344ca4565d05fd0dfdd,
-        type: 3}
-      propertyPath: tiles.Array.data[3]
-      value: 
-      objectReference: {fileID: 2415914987917489986, guid: 6902e77122a510740a6735a4eead1bf9,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cac6659083bd0344ca4565d05fd0dfdd, type: 3}
