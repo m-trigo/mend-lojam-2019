@@ -46,16 +46,16 @@ public class GridScript : MonoBehaviour
             CreateAt( edgePrefab, SIZE - 1, y );
         }
 
-        CreateAt( tilePrefabs[ 0 ], SIZE / 2, SIZE / 2 );
+        CreateAt( tilePrefabs[ 0 ], SIZE / 2 - 2, SIZE / 2 );
         CreateAt( tilePrefabs[ 1 ], SIZE / 2 - 1, SIZE / 2 );
-        CreateAt( tilePrefabs[ 2 ], SIZE / 2 - 2, SIZE / 2 );
+        CreateAt( tilePrefabs[ 2 ], SIZE / 2, SIZE / 2 );
         CreateAt( tilePrefabs[ 3 ], SIZE / 2 + 1, SIZE / 2 );
 
         tiles_ = new List<GameObject>()
         {
-            grid_[SIZE / 2, SIZE / 2],
-            grid_[SIZE / 2 - 1, SIZE / 2],
             grid_[SIZE / 2 - 2, SIZE / 2],
+            grid_[SIZE / 2 - 1, SIZE / 2],
+            grid_[SIZE / 2, SIZE / 2],
             grid_[SIZE / 2 + 1, SIZE / 2],
         };
     }
