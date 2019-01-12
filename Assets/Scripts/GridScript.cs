@@ -47,17 +47,24 @@ public class GridScript : MonoBehaviour
             CreateAt( edgePrefab, SIZE - 1, y );
         }
 
-        CreateAt( tilePrefabs[ 0 ], SIZE / 2 - 2, SIZE / 2 );
-        CreateAt( tilePrefabs[ 1 ], SIZE / 2 - 1, SIZE / 2 );
-        CreateAt( tilePrefabs[ 2 ], SIZE / 2, SIZE / 2 );
-        CreateAt( tilePrefabs[ 3 ], SIZE / 2 + 1, SIZE / 2 );
+        int center = SIZE / 2;
+         
+        Vector2 tile1Coordinates = new Vector2(center, center);
+        Vector2 tile2Coordinates = new Vector2(center + 1, center + 1);
+        Vector2 tile3Coordinates = new Vector2(center + 2, center + 2);
+        Vector2 tile4Coordinates = new Vector2(center + 3, center + 3);
+
+        CreateAt( tilePrefabs[ 0 ], (int) tile1Coordinates.x, (int) tile1Coordinates.y); // orange
+        CreateAt( tilePrefabs[ 1 ], (int) tile2Coordinates.x, (int) tile2Coordinates.y); // pink
+        CreateAt( tilePrefabs[ 2 ], (int) tile3Coordinates.x, (int) tile3Coordinates.y); // yellow
+        CreateAt( tilePrefabs[ 3 ], (int) tile4Coordinates.x, (int) tile4Coordinates.y); // blue
 
         tiles_ = new List<GameObject>()
         {
-            grid_[SIZE / 2 - 2, SIZE / 2],
-            grid_[SIZE / 2 - 1, SIZE / 2],
-            grid_[SIZE / 2, SIZE / 2],
-            grid_[SIZE / 2 + 1, SIZE / 2],
+            grid_[(int) tile1Coordinates.x, (int) tile1Coordinates.y],
+            grid_[(int) tile2Coordinates.x, (int) tile2Coordinates.y],
+            grid_[(int) tile3Coordinates.x, (int) tile3Coordinates.y],
+            grid_[(int) tile4Coordinates.x, (int) tile4Coordinates.y],
         };
     }
 
