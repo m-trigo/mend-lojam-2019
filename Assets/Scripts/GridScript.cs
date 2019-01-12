@@ -277,8 +277,16 @@ public class GridScript : MonoBehaviour
 
             activeTile_.transform.DOMove( dest, time ).SetEase( Ease ).OnComplete( () => {
                 isMoving = false;
-                Shake( activeTile_ );
+                foreach ( GameObject tile in tiles_ )
+                {
+                    float distance = Vector2.Distance( tile.transform.localPosition, activeTile_.transform.localPosition );
+                    if ( distance < 1.8f )
+                    {
+                        Shake( tile );
+                    }
+                }
             } );
+
             grid_[ newCoordinate.x, newCoordinate.y ] = activeTile_;
             grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
         }
