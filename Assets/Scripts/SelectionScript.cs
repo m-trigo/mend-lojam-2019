@@ -8,7 +8,7 @@ public class SelectionScript : MonoBehaviour
 
     private void OnMouseDown()
     {
-        GetComponentInParent<GridScript>().SetSelectedTile( gameObject );
+        GetComponentInParent<GridScript>().SetActiveTile( gameObject );
     }
 
     /* Public */
