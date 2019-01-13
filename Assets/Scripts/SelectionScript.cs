@@ -11,16 +11,27 @@ public class SelectionScript : MonoBehaviour
         GetComponentInParent<GridScript>().SetActiveTile( gameObject );
     }
 
+    private void OnMouseUp()
+    {
+        alreadyMoved = false;
+    }
+
     private void OnMouseDrag()
     {
+        if ( alreadyMoved )
+        {
+            return;
+        }
+
         Vector2 mouse = Camera.main.ScreenToWorldPoint( Input.mousePosition );
         float dragDistance = Vector2.Distance( mouse, gameObject.transform.position );
-        if (dragDistance > MIN_DRAG_DISTANCE)
+        if ( dragDistance > MIN_DRAG_DISTANCE )
         {
+            alreadyMoved = true;
             GridScript grid = GetComponentInParent<GridScript>();
 
             Vector2 dragVector = mouse - ( Vector2 ) gameObject.transform.position;
-            if ( Mathf.Abs(dragVector.x) > Mathf.Abs(dragVector.y) )
+            if ( Mathf.Abs( dragVector.x ) > Mathf.Abs( dragVector.y ) )
             {
                 if ( dragVector.x > 0 )
                 {
@@ -50,4 +61,6 @@ public class SelectionScript : MonoBehaviour
     /* Private */
 
     private const float MIN_DRAG_DISTANCE = 1f;
+
+    private bool alreadyMoved = false;
 }
