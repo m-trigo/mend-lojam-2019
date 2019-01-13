@@ -43,8 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84c2326b989d92a438067b9db867290f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  edgePrefab: {fileID: 8369217161335825893, guid: 7e8b40d8366829a47a8baa398bd9f9da,
-    type: 3}
   topLeftEdgePrefab: {fileID: 2949989676265316303, guid: f10bf6191e23da64f907a1b4533a636b,
     type: 3}
   topMiddleEdgePrefab: {fileID: 3202644143461588357, guid: 237a210245e7d7240873fcd87126bd94,
@@ -66,7 +64,11 @@ MonoBehaviour:
   - {fileID: 3241809259156618884, guid: bb7a2adc7d65473458980f1e6bb07e5c, type: 3}
   - {fileID: 431671553534521181, guid: 7838aaadbc984c54b95667781f74c102, type: 3}
   - {fileID: 2415914987917489986, guid: 6902e77122a510740a6735a4eead1bf9, type: 3}
+  TileMovementSpeed: 10
   MovementEase: 34
-  MoveToMiddleEase: 5
+  ShakeDuration: 0.1
+  ShakeIntensity: 0.25
+  ShakeVibratto: 0
+  ShakeRandomness: 0
   GrowToFitEase: 12
-  speed: 10
+  GrowthDuration: 0.4
