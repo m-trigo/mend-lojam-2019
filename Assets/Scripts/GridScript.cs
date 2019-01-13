@@ -150,10 +150,6 @@ public class GridScript : MonoBehaviour
         {
             CycleActiveTile();
         }
-        else if ( Input.GetKeyDown( KeyCode.R ) )
-        {
-            Restart();
-        }
         else if ( !Input.GetMouseButtonDown( 0 ) )
         {
             hadInput = false;
@@ -208,11 +204,6 @@ public class GridScript : MonoBehaviour
 
             return new Coordinate();
         }
-    }
-
-    private void LoadLevel( int exclude = -1 )
-    {
-
     }
 
     private void CycleActiveTile()
