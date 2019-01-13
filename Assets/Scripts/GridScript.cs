@@ -76,24 +76,19 @@ public class GridScript : MonoBehaviour
 
         #region TILE CREATION
 
-        int center = SIZE / 2;
+        Tileset tileset = FileParser.Parse("level1.txt", SIZE);
 
-        Coordinate tile1Coordinates = new Coordinate( center - 2, center );
-        Coordinate tile2Coordinates = new Coordinate( center - 1, center );
-        Coordinate tile3Coordinates = new Coordinate( center + 0, center );
-        Coordinate tile4Coordinates = new Coordinate( center + 1, center );
-
-        CreateAt( tilePrefabs[ 0 ], tile1Coordinates ); // orange
-        CreateAt( tilePrefabs[ 1 ], tile2Coordinates ); // pink
-        CreateAt( tilePrefabs[ 2 ], tile3Coordinates ); // yellow
-        CreateAt( tilePrefabs[ 3 ], tile4Coordinates ); // blue
+        CreateAt( tilePrefabs[ 0 ], tileset.Tiles['A'].Coordinates[0] ); // orange
+        CreateAt( tilePrefabs[ 1 ], tileset.Tiles['B'].Coordinates[0]); // pink
+        CreateAt( tilePrefabs[ 2 ], tileset.Tiles['C'].Coordinates[0]); // yellow
+        CreateAt( tilePrefabs[ 3 ], tileset.Tiles['D'].Coordinates[0]); // blue
 
         tiles_ = new List<GameObject>()
         {
-            grid_[tile1Coordinates.x, tile1Coordinates.y],
-            grid_[tile2Coordinates.x, tile2Coordinates.y],
-            grid_[tile3Coordinates.x, tile3Coordinates.y],
-            grid_[tile4Coordinates.x, tile4Coordinates.y],
+            grid_[tileset.Tiles['A'].Coordinates[0].x, tileset.Tiles['A'].Coordinates[0].y],
+            grid_[tileset.Tiles['B'].Coordinates[0].x, tileset.Tiles['B'].Coordinates[0].y],
+            grid_[tileset.Tiles['C'].Coordinates[0].x, tileset.Tiles['C'].Coordinates[0].y],
+            grid_[tileset.Tiles['D'].Coordinates[0].x, tileset.Tiles['D'].Coordinates[0].y],
         };
 
         #endregion
