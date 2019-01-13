@@ -66,5 +66,7 @@ MonoBehaviour:
   - {fileID: 3241809259156618884, guid: bb7a2adc7d65473458980f1e6bb07e5c, type: 3}
   - {fileID: 431671553534521181, guid: 7838aaadbc984c54b95667781f74c102, type: 3}
   - {fileID: 2415914987917489986, guid: 6902e77122a510740a6735a4eead1bf9, type: 3}
-  Ease: 34
+  MovementEase: 34
+  MoveToMiddleEase: 5
+  GrowToFitEase: 12
   speed: 10
