@@ -7,48 +7,45 @@ public class GridScript : MonoBehaviour
 {
     /* Inspector */
 
-    #region DEPENDENCY INJECTIONS
+    #region PREFAB REFERENCES
 
-    [SerializeField]
-    private GameObject topLeftEdgePrefab = null;
+    [Space]
+    [Header( "Prefab References" )]
 
-    [SerializeField]
-    private GameObject topMiddleEdgePrefab = null;
+    public GameObject topLeftEdgePrefab;
+    public GameObject topMiddleEdgePrefab;
+    public GameObject topRightEdgePrefab;
+    public GameObject bottomLeftEdgePrefab;
+    public GameObject bottomMiddleEdgePrefab;
+    public GameObject bottomRightEdgePrefab;
+    public GameObject middleRightEdgePrefab;
+    public GameObject middleLeftEdgePrefab;
 
-    [SerializeField]
-    private GameObject topRightEdgePrefab = null;
-
-    [SerializeField]
-    private GameObject bottomLeftEdgePrefab = null;
-
-    [SerializeField]
-    private GameObject bottomMiddleEdgePrefab = null;
-
-    [SerializeField]
-    private GameObject bottomRightEdgePrefab = null;
-
-    [SerializeField]
-    private GameObject middleRightEdgePrefab = null;
-
-    [SerializeField]
-    private GameObject middleLeftEdgePrefab = null;
-
-    [SerializeField]
-    private GameObject[] tilePrefabs = null;
+    public GameObject[] tilePrefabs;
 
     #endregion
 
     #region ANIMATION PARAMETERS
 
-    [SerializeField]
-    private Ease MovementEase = Ease.Unset;
+    [Space]
+    [Header( "Tile Movement" )]
 
-    [SerializeField]
-    private Ease GrowToFitEase = Ease.Unset;
+    public float TileMovementSpeed;
+    public Ease MovementEase;
 
-    [SerializeField]
-    [Range( 8f, 12f )]
-    private float speed = 10f;
+    [Space]
+    [Header( "Shake Animation" )]
+
+    public float ShakeDuration;
+    public float ShakeIntensity;
+    public int ShakeVibratto;
+    public float ShakeRandomness;
+
+    [Space]
+    [Header( "Victory Animation" )]
+
+    public Ease GrowToFitEase;
+    public float GrowthDuration;
 
     #endregion
 
@@ -81,10 +78,10 @@ public class GridScript : MonoBehaviour
 
         int center = SIZE / 2;
 
-        Coordinate tile1Coordinates = new Coordinate( center, center );
-        Coordinate tile2Coordinates = new Coordinate( center + 1, center + 1 );
-        Coordinate tile3Coordinates = new Coordinate( center + 2, center + 2 );
-        Coordinate tile4Coordinates = new Coordinate( center + 3, center + 3 );
+        Coordinate tile1Coordinates = new Coordinate( center - 2, center );
+        Coordinate tile2Coordinates = new Coordinate( center - 1, center );
+        Coordinate tile3Coordinates = new Coordinate( center + 0, center );
+        Coordinate tile4Coordinates = new Coordinate( center + 1, center );
 
         CreateAt( tilePrefabs[ 0 ], tile1Coordinates ); // orange
         CreateAt( tilePrefabs[ 1 ], tile2Coordinates ); // pink
@@ -108,35 +105,35 @@ public class GridScript : MonoBehaviour
 
         if ( Input.GetKeyDown( KeyCode.W ) )
         {
-            move( Direction.UP );
+            Move( Direction.UP );
         }
         else if ( Input.GetKeyDown( KeyCode.UpArrow ) )
         {
-            move( Direction.UP );
+            Move( Direction.UP );
         }
         else if ( Input.GetKeyDown( KeyCode.A ) )
         {
-            move( Direction.LEFT );
+            Move( Direction.LEFT );
         }
         else if ( Input.GetKeyDown( KeyCode.LeftArrow ) )
         {
-            move( Direction.LEFT );
+            Move( Direction.LEFT );
         }
         else if ( Input.GetKeyDown( KeyCode.S ) )
         {
-            move( Direction.DOWN );
+            Move( Direction.DOWN );
         }
         else if ( Input.GetKeyDown( KeyCode.DownArrow ) )
         {
-            move( Direction.DOWN );
+            Move( Direction.DOWN );
         }
         else if ( Input.GetKeyDown( KeyCode.D ) )
         {
-            move( Direction.RIGHT );
+            Move( Direction.RIGHT );
         }
         else if ( Input.GetKeyDown( KeyCode.RightArrow ) )
         {
-            move( Direction.RIGHT );
+            Move( Direction.RIGHT );
         }
         else if ( Input.GetKeyDown( KeyCode.Space ) )
         {
@@ -160,10 +157,10 @@ public class GridScript : MonoBehaviour
 
     /* Public */
 
-    public void SetActiveTile( GameObject gameObject )
+    public void SetActiveTile( GameObject tile )
     {
-        activeTileIndex_ = tiles_.IndexOf( gameObject );
-        Shake( gameObject );
+        activeTileIndex_ = tiles_.IndexOf( tile );
+        Shake( tile );
     }
 
     /* Private */
@@ -200,181 +197,16 @@ public class GridScript : MonoBehaviour
         }
     }
 
-    private void Restart()
-    {
-        SceneManager.LoadScene( SceneManager.GetActiveScene().name );
-    }
-
-    private void Shake( GameObject gameObject )
-    {
-        gameObject.transform.localScale = Vector3.one;
-        gameObject.transform.DOShakeScale( 0.25f, 0.25f ).OnComplete( () => {
-            gameObject.transform.localScale = Vector3.one;
-        } );
-    }
-
-    private void CheckVictory()
-    {
-        if ( IsMended() )
-        {
-            GameObject container = new GameObject( "container" );
-
-            Vector3 p = Vector3.zero;
-            foreach ( GameObject tile in tiles_ )
-            {
-                p += tile.transform.localPosition;
-            }
-            p = p / tiles_.Count;
-            container.transform.position = p;
-
-            foreach ( GameObject tile in tiles_ )
-            {
-                tile.transform.SetParent( container.transform );
-            }
-
-            float distanceToMove = Vector2.Distance( Vector3.zero, container.transform.position );
-            float time = distanceToMove / speed / 2;
-
-            container.transform.DOScale( 0, 1 ).SetEase( GrowToFitEase ).OnComplete( () => {
-                container.transform.position = Vector3.zero;
-                container.transform.DOScale( 4, 2 ).SetEase( GrowToFitEase );
-            } );
-        }
-    }
-
     private void CycleActiveTile()
     {
         SetActiveTile( tiles_[ ( activeTileIndex_ + 1 ) % tiles_.Count ] );
     }
 
-    private void PlaceAt( GameObject gameObject, int x, int y )
-    {
-        PlaceAt( gameObject, new Coordinate() { x = x, y = y } );
-    }
-
-    private void PlaceAt( GameObject gameObject, Coordinate coordinate )
-    {
-        gameObject.transform.localPosition = BottomLeftCorner + Vector3.one / 2 + new Vector3( coordinate.x, coordinate.y, 0 );
-        grid_[ coordinate.x, coordinate.y ] = gameObject;
-    }
-
-    private void CreateAt( GameObject prefab, int x, int y )
-    {
-        CreateAt( prefab, new Coordinate() { x = x, y = y } );
-    }
-
-    private void CreateAt( GameObject prefab, Coordinate coordinate )
-    {
-        GameObject instance = Instantiate( prefab, transform );
-        PlaceAt( instance, coordinate );
-        instance.name = coordinate.ToString();
-    }
-
-    private Coordinate destination( Direction direction )
-    {
-        Coordinate d = ActiveTileCoordinate;
-        switch ( direction )
-        {
-            case Direction.UP:
-                for ( int y = d.y + 1; y < SIZE; y++ )
-                {
-                    if ( grid_[ d.x, y ] != null )
-                    {
-                        break;
-                    }
-
-                    d.y = y;
-                }
-
-                break;
-
-            case Direction.DOWN:
-                for ( int y = d.y - 1; y > 0; y-- )
-                {
-                    if ( grid_[ d.x, y ] != null )
-                    {
-                        break;
-                    }
-                    d.y = y;
-                }
-                break;
-
-            case Direction.RIGHT:
-                for ( int x = d.x + 1; x < SIZE; x++ )
-                {
-                    if ( grid_[ x, d.y ] != null )
-                    {
-                        break;
-                    }
-
-                    d.x = x;
-                }
-                break;
-
-            case Direction.LEFT:
-                for ( int x = d.x - 1; x > 0; x-- )
-                {
-                    if ( grid_[ x, d.y ] != null )
-                    {
-                        break;
-                    }
-                    d.x = x;
-                }
-                break;
-        }
-
-        return d;
-    }
-
-    private void move( Direction direction )
-    {
-        if ( isMoving || IsMended() )
-        {
-            return;
-        }
-
-        isMoving = true;
-        Coordinate oldCoordinate = ActiveTileCoordinate;
-        Coordinate newCoordinate = destination( direction );
-        if ( !oldCoordinate.Equals( newCoordinate ) )
-        {
-            Vector3 dest = BottomLeftCorner + Vector3.one / 2 + new Vector3( newCoordinate.x, newCoordinate.y, 0 );
-
-            float distanceToMove = Vector2.Distance( dest, activeTile_.transform.position );
-            float time = distanceToMove / speed;
-
-            activeTile_.transform.DOMove( dest, time ).SetEase( MovementEase ).OnComplete( () => {
-                isMoving = false;
-                foreach ( GameObject tile in tiles_ )
-                {
-                    float distance = Vector2.Distance( tile.transform.localPosition, activeTile_.transform.localPosition );
-                    if ( distance < 1.8f && distance > 0.2f )
-                    {
-                        Shake( tile );
-                    }
-                }
-
-                activeTile_.transform.localScale = Vector3.one;
-                activeTile_.transform.DOShakeScale( 0.2f, 0.2f ).OnComplete( () => {
-                    activeTile_.transform.localScale = Vector3.one;
-                    CheckVictory(); // race condition
-                } );
-            } );
-
-            grid_[ newCoordinate.x, newCoordinate.y ] = activeTile_;
-            grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
-        }
-        else
-        {
-            isMoving = false;
-        }
-    }
-
-    private bool IsTile( GameObject gameObj )
+    private bool IsTile( GameObject obj )
     {
         foreach ( GameObject tile in tiles_ )
         {
-            if ( tile.Equals( gameObj ) )
+            if ( tile.Equals( obj ) )
             {
                 return true;
             }
@@ -411,5 +243,157 @@ public class GridScript : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void Restart()
+    {
+        SceneManager.LoadScene( SceneManager.GetActiveScene().name );
+    }
+
+    private void Shake( GameObject tile, TweenCallback onComplete = null )
+    {
+        tile.transform.localScale = Vector3.one;
+        tile.transform.DOShakeScale( ShakeDuration, ShakeIntensity, ShakeVibratto, ShakeRandomness ).OnComplete( () => {
+            tile.transform.localScale = Vector3.one;
+            onComplete?.Invoke();
+        } );
+    }
+
+    private void CheckVictory()
+    {
+        if ( IsMended() )
+        {
+            GameObject container = new GameObject( "container" );
+
+            Vector3 p = Vector3.zero;
+            foreach ( GameObject tile in tiles_ )
+            {
+                p += tile.transform.localPosition;
+            }
+            p = p / tiles_.Count;
+            container.transform.position = p;
+
+            foreach ( GameObject tile in tiles_ )
+            {
+                tile.transform.SetParent( container.transform );
+            }
+
+            container.transform.DOScale( 0, 1 ).SetEase( GrowToFitEase ).OnComplete( () => {
+                container.transform.position = Vector3.zero;
+                container.transform.DOScale( 4, GrowthDuration ).SetEase( GrowToFitEase );
+            } );
+        }
+    }
+
+    private void CreateAt( GameObject prefab, int x, int y )
+    {
+        GameObject instance = Instantiate( prefab, transform );
+        instance.transform.localPosition = BottomLeftCorner + Vector3.one / 2 + new Vector3( x, y, 0 );
+        grid_[ x, y ] = instance;
+    }
+
+    private void CreateAt( GameObject prefab, Coordinate coordinate )
+    {
+        CreateAt( prefab, coordinate.x, coordinate.y );
+    }
+
+    private Coordinate Destination( Direction direction )
+    {
+        Coordinate dest = ActiveTileCoordinate;
+        switch ( direction )
+        {
+            case Direction.UP:
+                for ( int y = dest.y + 1; y < SIZE; y++ )
+                {
+                    if ( grid_[ dest.x, y ] != null )
+                    {
+                        break;
+                    }
+
+                    dest.y = y;
+                }
+
+                break;
+
+            case Direction.DOWN:
+                for ( int y = dest.y - 1; y > 0; y-- )
+                {
+                    if ( grid_[ dest.x, y ] != null )
+                    {
+                        break;
+                    }
+
+                    dest.y = y;
+                }
+                break;
+
+            case Direction.RIGHT:
+                for ( int x = dest.x + 1; x < SIZE; x++ )
+                {
+                    if ( grid_[ x, dest.y ] != null )
+                    {
+                        break;
+                    }
+
+                    dest.x = x;
+                }
+                break;
+
+            case Direction.LEFT:
+                for ( int x = dest.x - 1; x > 0; x-- )
+                {
+                    if ( grid_[ x, dest.y ] != null )
+                    {
+                        break;
+                    }
+
+                    dest.x = x;
+                }
+                break;
+        }
+
+        return dest;
+    }
+
+    private void Move( Direction direction )
+    {
+        if ( isMoving || IsMended() )
+        {
+            return;
+        }
+        isMoving = true;
+
+        Coordinate oldCoordinate = ActiveTileCoordinate;
+        Coordinate newCoordinate = Destination( direction );
+        if ( !oldCoordinate.Equals( newCoordinate ) )
+        {
+            Vector3 dest = BottomLeftCorner + Vector3.one / 2 + new Vector3( newCoordinate.x, newCoordinate.y, 0 );
+            GameObject movingTile = activeTile_;
+
+            float distanceToMove = Vector2.Distance( dest, movingTile.transform.position );
+            float time = distanceToMove / TileMovementSpeed;
+
+            movingTile.transform.DOMove( dest, time ).SetEase( MovementEase ).OnComplete( () => {
+                foreach ( GameObject tile in tiles_ )
+                {
+                    float distance = Vector2.Distance( tile.transform.localPosition, movingTile.transform.localPosition );
+                    if ( distance < 1.8f && distance > 0.2f )
+                    {
+                        Shake( tile );
+                    }
+                }
+
+                Shake( movingTile, () => {
+                    isMoving = false;
+                    grid_[ newCoordinate.x, newCoordinate.y ] = movingTile;
+                    grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
+                    CheckVictory();
+                } );
+            } );
+        }
+        else
+        {
+            isMoving = false;
+        }
     }
 }
