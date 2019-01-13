@@ -263,7 +263,7 @@ public class GridScript : MonoBehaviour
     {
         if ( IsMended() )
         {
-            GameObject container = new GameObject( "container" );
+            GameObject victorySquare = new GameObject( "VictorySquareS2" );
 
             Vector3 p = Vector3.zero;
             foreach ( GameObject tile in tiles_ )
@@ -271,16 +271,16 @@ public class GridScript : MonoBehaviour
                 p += tile.transform.localPosition;
             }
             p = p / tiles_.Count;
-            container.transform.position = p;
+            victorySquare.transform.position = p;
 
             foreach ( GameObject tile in tiles_ )
             {
-                tile.transform.SetParent( container.transform );
+                tile.transform.SetParent( victorySquare.transform );
             }
 
-            container.transform.DOScale( 0, 1 ).SetEase( GrowToFitEase ).OnComplete( () => {
-                container.transform.position = Vector3.zero;
-                container.transform.DOScale( 4, GrowthDuration ).SetEase( GrowToFitEase );
+            victorySquare.transform.DOScale( 0, 1 ).SetEase( GrowToFitEase ).OnComplete( () => {
+                victorySquare.transform.position = Vector3.zero;
+                victorySquare.transform.DOScale( 4, GrowthDuration ).SetEase( GrowToFitEase );
             } );
         }
     }
@@ -384,10 +384,10 @@ public class GridScript : MonoBehaviour
                 }
 
                 Shake( movingTile, () => {
-                    isMoving = false;
                     grid_[ newCoordinate.x, newCoordinate.y ] = movingTile;
                     grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
                     CheckVictory();
+                    isMoving = false;
                 } );
             } );
         }
