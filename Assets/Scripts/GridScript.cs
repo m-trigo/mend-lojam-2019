@@ -274,7 +274,7 @@ public class GridScript : MonoBehaviour
                 tile.transform.SetParent( victorySquare.transform );
             }
 
-            victorySquare.transform.DOScale( 0, 1 ).SetEase( GrowToFitEase ).OnComplete( () => {
+            victorySquare.transform.DOScale( 0, 0.2f ).SetEase( GrowToFitEase ).OnComplete( () => {
                 victorySquare.transform.position = Vector3.zero;
                 victorySquare.transform.DOScale( 4, GrowthDuration ).SetEase( GrowToFitEase );
             } );
