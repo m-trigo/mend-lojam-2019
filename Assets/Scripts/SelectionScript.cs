@@ -60,7 +60,7 @@ public class SelectionScript : MonoBehaviour
 
     /* Private */
 
-    private const float MIN_DRAG_DISTANCE = 1f;
+    private const float MIN_DRAG_DISTANCE = 0.5f;
 
     private bool alreadyMoved = false;
 }
