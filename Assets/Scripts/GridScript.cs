@@ -7,10 +7,7 @@ public class GridScript : MonoBehaviour
 {
     /* Inspector */
 
-    #region INSPECTOR
-
-    [SerializeField]
-    private GameObject edgePrefab = null;
+    #region DEPENDENCY INJECTIONS
 
     [SerializeField]
     private GameObject topLeftEdgePrefab = null;
@@ -39,17 +36,18 @@ public class GridScript : MonoBehaviour
     [SerializeField]
     private GameObject[] tilePrefabs = null;
 
-    [SerializeField]
-    private Ease MovementEase = Ease.Unset;
+    #endregion
+
+    #region ANIMATION PARAMETERS
 
     [SerializeField]
-    private Ease MoveToMiddleEase = Ease.Unset;
+    private Ease MovementEase = Ease.Unset;
 
     [SerializeField]
     private Ease GrowToFitEase = Ease.Unset;
 
     [SerializeField]
-    [Range( 4f, 10f )]
+    [Range( 8f, 12f )]
     private float speed = 10f;
 
     #endregion
@@ -58,14 +56,7 @@ public class GridScript : MonoBehaviour
 
     private void Awake()
     {
-        edgeTag_ = edgePrefab.tag;
-        tileTags_ = new List<string>();
-        foreach ( GameObject gameObject in tilePrefabs )
-        {
-            tileTags_.Add( gameObject.tag );
-        }
-
-        grid_ = new GameObject[ SIZE, SIZE ];
+        #region EDGE CREATION
 
         CreateAt( topLeftEdgePrefab, 0, SIZE - 1 );
         CreateAt( topRightEdgePrefab, SIZE - 1, SIZE - 1 );
@@ -84,29 +75,37 @@ public class GridScript : MonoBehaviour
             CreateAt( middleRightEdgePrefab, SIZE - 1, y );
         }
 
-        int center = SIZE / 2;
-         
-        Vector2 tile1Coordinates = new Vector2(center, center);
-        Vector2 tile2Coordinates = new Vector2(center + 1, center + 1);
-        Vector2 tile3Coordinates = new Vector2(center + 2, center + 2);
-        Vector2 tile4Coordinates = new Vector2(center + 3, center + 3);
+        #endregion
 
-        CreateAt( tilePrefabs[ 0 ], (int) tile1Coordinates.x, (int) tile1Coordinates.y); // orange
-        CreateAt( tilePrefabs[ 1 ], (int) tile2Coordinates.x, (int) tile2Coordinates.y); // pink
-        CreateAt( tilePrefabs[ 2 ], (int) tile3Coordinates.x, (int) tile3Coordinates.y); // yellow
-        CreateAt( tilePrefabs[ 3 ], (int) tile4Coordinates.x, (int) tile4Coordinates.y); // blue
+        #region TILE CREATION
+
+        int center = SIZE / 2;
+
+        Coordinate tile1Coordinates = new Coordinate( center, center );
+        Coordinate tile2Coordinates = new Coordinate( center + 1, center + 1 );
+        Coordinate tile3Coordinates = new Coordinate( center + 2, center + 2 );
+        Coordinate tile4Coordinates = new Coordinate( center + 3, center + 3 );
+
+        CreateAt( tilePrefabs[ 0 ], tile1Coordinates ); // orange
+        CreateAt( tilePrefabs[ 1 ], tile2Coordinates ); // pink
+        CreateAt( tilePrefabs[ 2 ], tile3Coordinates ); // yellow
+        CreateAt( tilePrefabs[ 3 ], tile4Coordinates ); // blue
 
         tiles_ = new List<GameObject>()
         {
-            grid_[(int) tile1Coordinates.x, (int) tile1Coordinates.y],
-            grid_[(int) tile2Coordinates.x, (int) tile2Coordinates.y],
-            grid_[(int) tile3Coordinates.x, (int) tile3Coordinates.y],
-            grid_[(int) tile4Coordinates.x, (int) tile4Coordinates.y],
+            grid_[tile1Coordinates.x, tile1Coordinates.y],
+            grid_[tile2Coordinates.x, tile2Coordinates.y],
+            grid_[tile3Coordinates.x, tile3Coordinates.y],
+            grid_[tile4Coordinates.x, tile4Coordinates.y],
         };
+
+        #endregion
     }
 
     private void Update()
     {
+        #region INPUT
+
         if ( Input.GetKeyDown( KeyCode.W ) )
         {
             move( Direction.UP );
@@ -155,12 +154,11 @@ public class GridScript : MonoBehaviour
         {
             Restart();
         }
+
+        #endregion
     }
 
     /* Public */
-
-    public const int SIZE = 10;
-    public const int VICTORY_SIZE = 2;
 
     public void SetActiveTile( GameObject gameObject )
     {
@@ -170,11 +168,17 @@ public class GridScript : MonoBehaviour
 
     /* Private */
 
-    private string edgeTag_ = null;
-    private List<string> tileTags_ = null;
+    private const int SIZE = 10; // 8 x 8
+    private const int VICTORY_SIZE = 2;
+
+    private GameObject[,] grid_ = new GameObject[ SIZE, SIZE ];
 
     private List<GameObject> tiles_ = null;
     private int activeTileIndex_ = 0;
+
+    private bool isMoving = false;
+
+    private Vector3 BottomLeftCorner => transform.localPosition - SIZE / 2 * Vector3.one;
 
     private GameObject activeTile_ => tiles_[ activeTileIndex_ ];
     private Coordinate ActiveTileCoordinate
@@ -187,7 +191,7 @@ public class GridScript : MonoBehaviour
                 {
                     if ( activeTile_.Equals( grid_[ x, y ] ) )
                     {
-                        return new Coordinate() { x = x, y = y };
+                        return new Coordinate( x, y );
                     }
                 }
             }
@@ -195,12 +199,6 @@ public class GridScript : MonoBehaviour
             return new Coordinate();
         }
     }
-
-    private GameObject[,] grid_ = null;
-
-    private Vector3 BottomLeftCorner => transform.localPosition - SIZE / 2 * Vector3.one;
-
-    private bool isMoving = false;
 
     private void Restart()
     {
@@ -372,6 +370,19 @@ public class GridScript : MonoBehaviour
         }
     }
 
+    private bool IsTile( GameObject gameObj )
+    {
+        foreach ( GameObject tile in tiles_ )
+        {
+            if ( tile.Equals( gameObj ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private bool IsMended()
     {
         for ( int bottomLeftX = 0; bottomLeftX < SIZE - VICTORY_SIZE; bottomLeftX++ )
@@ -384,7 +395,8 @@ public class GridScript : MonoBehaviour
                 {
                     for ( int y = bottomLeftY; y < SIZE && y < bottomLeftY + VICTORY_SIZE; y++ )
                     {
-                        if ( grid_[ x, y ] != null && !grid_[ x, y ].CompareTag( edgeTag_ ) )
+                        GameObject tile = grid_[ x, y ];
+                        if ( tile != null && IsTile( tile ) )
                         {
                             count++;
                         }
