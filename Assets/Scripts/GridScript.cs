@@ -76,12 +76,12 @@ public class GridScript : MonoBehaviour
 
         #region TILE CREATION
 
-        Tileset tileset = FileParser.Parse("level1.txt", SIZE);
+        Tileset tileset = FileParser.Parse( "level1.txt", SIZE );
 
-        CreateAt( tilePrefabs[ 0 ], tileset.Tiles['A'].Coordinates[0] ); // orange
-        CreateAt( tilePrefabs[ 1 ], tileset.Tiles['B'].Coordinates[0]); // pink
-        CreateAt( tilePrefabs[ 2 ], tileset.Tiles['C'].Coordinates[0]); // yellow
-        CreateAt( tilePrefabs[ 3 ], tileset.Tiles['D'].Coordinates[0]); // blue
+        CreateAt( tilePrefabs[ 0 ], tileset.Tiles[ 'A' ].Coordinates[ 0 ] ); // orange
+        CreateAt( tilePrefabs[ 1 ], tileset.Tiles[ 'B' ].Coordinates[ 0 ] ); // pink
+        CreateAt( tilePrefabs[ 2 ], tileset.Tiles[ 'C' ].Coordinates[ 0 ] ); // yellow
+        CreateAt( tilePrefabs[ 3 ], tileset.Tiles[ 'D' ].Coordinates[ 0 ] ); // blue
 
         tiles_ = new List<GameObject>()
         {
@@ -154,6 +154,7 @@ public class GridScript : MonoBehaviour
 
     public void SetActiveTile( GameObject tile )
     {
+        queueTarget = null;
         activeTileIndex_ = tiles_.IndexOf( tile );
         Shake( tile );
     }
@@ -350,10 +351,30 @@ public class GridScript : MonoBehaviour
         return dest;
     }
 
+    private const float CLOSE_ENOUGH_FOR_INPUT_BUFFER = 0.2f;
+    private Vector3 lastMoveDestination;
+    private GameObject queueTarget = null;
+    private Direction queueDirection = Direction.UP;
+
     private void Move( Direction direction )
     {
+        GameObject movingTile = activeTile_;
+        if ( queueTarget != null )
+        {
+            movingTile = queueTarget;
+            queueTarget = null;
+        }
+
+        float distanceToEndOfMove = Vector2.Distance( movingTile.transform.position, lastMoveDestination );
+
         if ( isMoving || IsMended() )
         {
+            if ( isMoving && distanceToEndOfMove < CLOSE_ENOUGH_FOR_INPUT_BUFFER )
+            {
+                queueTarget = activeTile_;
+                queueDirection = direction;
+            }
+
             return;
         }
         isMoving = true;
@@ -363,7 +384,7 @@ public class GridScript : MonoBehaviour
         if ( !oldCoordinate.Equals( newCoordinate ) )
         {
             Vector3 dest = BottomLeftCorner + Vector3.one / 2 + new Vector3( newCoordinate.x, newCoordinate.y, 0 );
-            GameObject movingTile = activeTile_;
+            lastMoveDestination = dest;
 
             float distanceToMove = Vector2.Distance( dest, movingTile.transform.position );
             float time = distanceToMove / TileMovementSpeed;
@@ -383,12 +404,16 @@ public class GridScript : MonoBehaviour
                     grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
                     CheckVictory();
                     isMoving = false;
+                    if ( queueTarget != null )
+                    {
+                        Move( queueDirection );
+                    }
                 } );
             } );
         }
         else
         {
-            isMoving = false;
+            Shake( movingTile, () => isMoving = false );
         }
     }
 }
