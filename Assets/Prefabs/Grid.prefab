@@ -72,3 +72,13 @@ MonoBehaviour:
   ShakeRandomness: 0
   GrowToFitEase: 12
   GrowthDuration: 0.4
+  LevelFiles:
+  - {fileID: 4900000, guid: 6c53e804b96c34942a987d82d3ec8f92, type: 3}
+  - {fileID: 4900000, guid: c22c42aa8f13c394b8bba4270e9e0038, type: 3}
+  - {fileID: 4900000, guid: 5ea23d1126b9b96409b06caaf651d855, type: 3}
+  - {fileID: 4900000, guid: e930570395116a74d9a0cb4d74dfeda6, type: 3}
+  - {fileID: 4900000, guid: d24b9d4aa58d0e443923e90ded0b2614, type: 3}
+  - {fileID: 4900000, guid: 592d9c35af67dd744a0381b625e53c11, type: 3}
+  - {fileID: 4900000, guid: 7836c78a66646ea41878b47f2eb1eb56, type: 3}
+  - {fileID: 4900000, guid: 889a42798cb859c47b73b1a13a07a89a, type: 3}
+  TestLevel: 0
