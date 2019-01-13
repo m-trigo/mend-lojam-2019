@@ -76,19 +76,17 @@ public class GridScript : MonoBehaviour
 
         #region TILE CREATION
 
-        Tileset tileset = FileParser.Parse( "level1.txt", SIZE );
-
-        CreateAt( tilePrefabs[ 0 ], tileset.Tiles[ 'A' ].Coordinates[ 0 ] ); // orange
-        CreateAt( tilePrefabs[ 1 ], tileset.Tiles[ 'B' ].Coordinates[ 0 ] ); // pink
-        CreateAt( tilePrefabs[ 2 ], tileset.Tiles[ 'C' ].Coordinates[ 0 ] ); // yellow
-        CreateAt( tilePrefabs[ 3 ], tileset.Tiles[ 'D' ].Coordinates[ 0 ] ); // blue
+        CreateAt( tilePrefabs[ 0 ], SIZE / 2 - 1, SIZE / 2 ); // orange
+        CreateAt( tilePrefabs[ 1 ], SIZE / 2, SIZE / 2 + 1 ); // pink
+        CreateAt( tilePrefabs[ 2 ], SIZE / 2 + 1, SIZE / 2 ); // yellow
+        CreateAt( tilePrefabs[ 3 ], SIZE / 2 + 2, SIZE / 2 + 1 ); // blue
 
         tiles_ = new List<GameObject>()
         {
-            grid_[tileset.Tiles['A'].Coordinates[0].x, tileset.Tiles['A'].Coordinates[0].y],
-            grid_[tileset.Tiles['B'].Coordinates[0].x, tileset.Tiles['B'].Coordinates[0].y],
-            grid_[tileset.Tiles['C'].Coordinates[0].x, tileset.Tiles['C'].Coordinates[0].y],
-            grid_[tileset.Tiles['D'].Coordinates[0].x, tileset.Tiles['D'].Coordinates[0].y],
+            grid_[SIZE / 2 - 1, SIZE / 2],
+            grid_[SIZE / 2, SIZE / 2 + 1],
+            grid_[SIZE / 2 + 1, SIZE / 2],
+            grid_[SIZE / 2 + 2, SIZE / 2 + 1],
         };
 
         #endregion
@@ -249,7 +247,8 @@ public class GridScript : MonoBehaviour
     private void Shake( GameObject tile, TweenCallback onComplete = null )
     {
         tile.transform.localScale = Vector3.one;
-        tile.transform.DOShakeScale( ShakeDuration, ShakeIntensity, ShakeVibratto, ShakeRandomness ).OnComplete( () => {
+        tile.transform.DOShakeScale( ShakeDuration, ShakeIntensity, ShakeVibratto, ShakeRandomness ).OnComplete( () =>
+        {
             tile.transform.localScale = Vector3.one;
             onComplete?.Invoke();
         } );
@@ -274,7 +273,8 @@ public class GridScript : MonoBehaviour
                 tile.transform.SetParent( victorySquare.transform );
             }
 
-            victorySquare.transform.DOScale( 0, 0.2f ).SetEase( GrowToFitEase ).OnComplete( () => {
+            victorySquare.transform.DOScale( 0, 0.2f ).SetEase( GrowToFitEase ).OnComplete( () =>
+            {
                 victorySquare.transform.position = Vector3.zero;
                 victorySquare.transform.DOScale( 4, GrowthDuration ).SetEase( GrowToFitEase );
             } );
@@ -356,7 +356,7 @@ public class GridScript : MonoBehaviour
     private GameObject queueTarget = null;
     private Direction queueDirection = Direction.UP;
 
-    private void Move( Direction direction )
+    public void Move( Direction direction )
     {
         GameObject movingTile = activeTile_;
         if ( queueTarget != null )
@@ -389,7 +389,8 @@ public class GridScript : MonoBehaviour
             float distanceToMove = Vector2.Distance( dest, movingTile.transform.position );
             float time = distanceToMove / TileMovementSpeed;
 
-            movingTile.transform.DOMove( dest, time ).SetEase( MovementEase ).OnComplete( () => {
+            movingTile.transform.DOMove( dest, time ).SetEase( MovementEase ).OnComplete( () =>
+            {
                 foreach ( GameObject tile in tiles_ )
                 {
                     float distance = Vector2.Distance( tile.transform.localPosition, movingTile.transform.localPosition );
@@ -399,7 +400,8 @@ public class GridScript : MonoBehaviour
                     }
                 }
 
-                Shake( movingTile, () => {
+                Shake( movingTile, () =>
+                {
                     grid_[ newCoordinate.x, newCoordinate.y ] = movingTile;
                     grid_[ oldCoordinate.x, oldCoordinate.y ] = null;
                     CheckVictory();
